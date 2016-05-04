@@ -15,8 +15,12 @@ var App = React.createClass({
 
 var Editor = React.createClass({
   render() {
+    // <img src={'http://cultofthepartyparrot.com/parrots/rightparrot.gif'} width="30px"/>
     return (
       <div className="editor">
+        <img src={'http://cultofthepartyparrot.com/parrots/parrot.gif'} width="30px"/>
+        <img src={'http://cultofthepartyparrot.com/parrots/parrot.gif'} width="30px"/>
+        <img src={'http://cultofthepartyparrot.com/parrots/parrot.gif'} width="30px"/>
         <EditorTitle />
         <EditorBody />
       </div>
@@ -29,7 +33,7 @@ var EditorTitle = React.createClass({
     localStorage.title = e.target.innerHTML
   },
   render() {
-    var title = localStorage.title || null;
+    var title = localStorage.title || 'Бодрый заголовок';
     return (
       <div
         className="editor-title"
@@ -46,7 +50,7 @@ var EditorBody = React.createClass({
     localStorage.body = e.target.innerHTML
   },
   render() {
-    var body = localStorage.body || null;
+    var body = localStorage.body || 'Тело поста';
     return (
       <div
         className="editor-body"
