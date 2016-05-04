@@ -1,0 +1,31 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #eee;
+}
+
+.editor {
+  width: 600px;
+  position: relative;
+  margin: 80px auto;
+}
+.editor-title, .editor-body {
+  background: #fff;
+  padding: 10px;
+}
+.editor-title:focus, .editor-body:focus {
+  outline: none;
+}
+.editor-title {
+  font-weight: 900;
+  font-size: 30px;
+  margin-bottom: 20px;
+}
+.editor-body {
+  font-size: 18px;
+}
+
+/*# sourceMappingURL=style.css.map */
