@@ -4,7 +4,6 @@
 
 body {
   margin: 0;
-  background: #eee;
   font-family: 'helvetica';
 }
 
@@ -14,7 +13,6 @@ body {
   margin: 80px auto;
 }
 .editor-title, .editor-body {
-  background: #fff;
   padding: 10px;
 }
 .editor-title:focus, .editor-body:focus {
@@ -27,6 +25,38 @@ body {
 }
 .editor-body {
   font-size: 18px;
+}
+
+.list {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 200px;
+  background: #fff;
+  padding: 10px;
+}
+.list-item {
+  position: relative;
+  margin-bottom: 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.list-item.active {
+  color: red;
+}
+
+button {
+  border: 2px solid red;
+  background: none;
+  color: red;
+  font-weight: 600;
+}
+button:focus {
+  outline: none;
+}
+button:active {
+  background: red;
+  color: #fff;
 }
 
 /*# sourceMappingURL=style.css.map */
