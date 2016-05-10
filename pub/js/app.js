@@ -27,11 +27,11 @@ var LS = {
 function createNote(){
   var map = LS.get('notesMap');
   var id = map ? Math.max.apply(null, map)+1 : 1;
+  map.push(id);
   LS.set('title', 'Новый пост вот', id);
   LS.set('body', 'Тело такого вот нового поста', id);
   LS.set('currentNoteId', id);
-  LS.set('notesMap', map.push(id));
-  return id;
+  LS.set('notesMap', map);
 }
 
 
@@ -52,8 +52,9 @@ var App = React.createClass({
     })
   },
   createNote(){
+    createNote();
     this.setState({
-      currentNoteId: createNote()
+      currentNoteId: LS.get('currentNoteId')
     })
   },
   render() {
@@ -80,8 +81,8 @@ var Editor = React.createClass({
     return (
       <div className="editor">
         <img src={'http://cultofthepartyparrot.com/parrots/parrot.gif'} width="30px"/>
-        <EditorTitle title={title}/>
-        <EditorBody body={body}/>
+        <EditorTitle currentNoteId={id} title={title}/>
+        <EditorBody currentNoteId={id} body={body}/>
       </div>
     )
   }
@@ -89,7 +90,7 @@ var Editor = React.createClass({
 
 var EditorTitle = React.createClass({
   keyUpHandler(e){
-    LS.set('title', e.target.innerHTML);
+    LS.set('title', e.target.innerHTML, this.props.currentNoteId);
   },
   render() {
     // var title = this.props.title;
@@ -106,7 +107,7 @@ var EditorTitle = React.createClass({
 
 var EditorBody = React.createClass({
   keyUpHandler(e){
-    LS.set('body', e.target.innerHTML);
+    LS.set('body', e.target.innerHTML, this.props.currentNoteId);
   },
   render() {
     // var body = localStorage.body || 'Тело поста';
@@ -132,6 +133,9 @@ var List = React.createClass({
   },
   createNote(){
     this.props.createNote()
+    this.setState({
+      notesMap: LS.get('notesMap')
+    })
   },
   render(){
     var currId = this.props.currentNoteId;
@@ -159,9 +163,6 @@ var List = React.createClass({
   }
 })
 
-
-// -------- UTILS ----------
-// -------------------------
 
 
 ReactDOM.render(
