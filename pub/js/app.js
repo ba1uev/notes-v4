@@ -4,11 +4,12 @@ var LS = {
     'title': 't_',
     'body': 'b_',
     'currentNoteId': 'currentNoteId',
-    'notesMap': 'notesMap'
+    'notesMap': 'notesMap',
+    'firstVisit': 'firstVisit'
   },
   get(key, id){
-    var result = localStorage[this.map[key] + (id ? id : '')] || null;
-    if (result === null) return false
+    var result = localStorage[this.map[key] + (id ? id : '')];
+    if (result === undefined) return null
     if (key === 'notesMap') {
       return result.split(',').map((item) => {
         return parseInt(item)
@@ -25,8 +26,9 @@ var LS = {
 }
 
 function createNote(){
-  var map = LS.get('notesMap');
-  var id = map ? Math.max.apply(null, map)+1 : 1;
+  // debugger;
+  var map = LS.get('notesMap') || [];
+  var id = map.length ? Math.max.apply(null, map)+1 : 1;
   map.push(id);
   LS.set('title', 'Новый пост вот', id);
   LS.set('body', 'Тело такого вот нового поста', id);
@@ -34,15 +36,40 @@ function createNote(){
   LS.set('notesMap', map);
 }
 
+function initDataBase(){
+  // debugger;
+  LS.set('notesMap', [1]);
+  LS.set('title', 'ПЕРВЫЙ ПОСТ', 1);
+  LS.set('body', 'bdy of the first POST', 1);
+  LS.set('currentNoteId', 1);
+}
+
 
 // ================================================
 
 var App = React.createClass({
+  getDefaultProps(){
+    var firstVisit = LS.get('firstVisit') === null ? true : false;
+    if (firstVisit === true) {
+      console.log('first visit / generate post');
+      initDataBase();
+    }
+  },
   getInitialState() {
     return {
-      // notesTitles: localStorage.notesTitles || null;
-      currentNoteId: LS.get('currentNoteId') || 1
+      // notesTitles: localStorage.notesTitles || null,
+      currentNoteId: LS.get('currentNoteId') || 1,
+      // currentNoteTitle: LS.get(' '),
     }
+  },
+  currentNoteTitleChanged(title){
+    console.log(title);
+    this.setState({
+      currentNoteTitle: title
+    })
+  },
+  componentDidMount(){
+    LS.set('firstVisit', false);
   },
   chooseNoteAction(id){
     // console.log(typeof note, note);
@@ -62,6 +89,7 @@ var App = React.createClass({
       <div>
         <Editor
           currentNoteId={this.state.currentNoteId}
+          currentNoteTitleChanged={this.currentNoteTitleChanged}
         />
         <List
           currentNoteId={this.state.currentNoteId}
@@ -74,14 +102,21 @@ var App = React.createClass({
 });
 
 var Editor = React.createClass({
+  currentNoteTitleChanged(t){
+    this.props.currentNoteTitleChanged(t)
+  },
   render() {
     var id = this.props.currentNoteId;
-    var title = LS.get('title', id) || 'Бодрый заголовок';
-    var body = LS.get('body', id) || 'Тело поста';
+    var title = this.props.firstVisit ? 'Бодрый заголовок' : LS.get('title', id);
+    var body = this.props.firstVisit ? 'Тело поста' : LS.get('body', id);
     return (
       <div className="editor">
         <img src={'http://cultofthepartyparrot.com/parrots/parrot.gif'} width="30px"/>
-        <EditorTitle currentNoteId={id} title={title}/>
+        <EditorTitle
+          currentNoteId={id}
+          title={title}
+          currentNoteTitleChanged={this.currentNoteTitleChanged}
+        />
         <EditorBody currentNoteId={id} body={body}/>
       </div>
     )
@@ -91,6 +126,7 @@ var Editor = React.createClass({
 var EditorTitle = React.createClass({
   keyUpHandler(e){
     LS.set('title', e.target.innerHTML, this.props.currentNoteId);
+    this.props.currentNoteTitleChanged(e.target.innerHTML)
   },
   render() {
     // var title = this.props.title;
@@ -150,7 +186,7 @@ var List = React.createClass({
             data-id={id}
             onClick={this.chooseNote}
             key={id}
-          >{title}</div>
+          >{title ? title : <span style={{color: 'gray'}}>Ноу Нейм ПОСТ</span>}</div>
         )
       })
     }
