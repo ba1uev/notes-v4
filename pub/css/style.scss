@@ -34,8 +34,9 @@ body {
   top: 10px;
   right: 10px;
   width: 200px;
-  background: #fff;
+  // background: #eee;
   padding: 10px;
+  text-align: right;
   &-item {
     position: relative;
     margin-bottom: 8px;
@@ -44,6 +45,9 @@ body {
     &.active {
       color: red;
     }
+  }
+  &-new {
+    margin-top: 20px;
   }
 }
 

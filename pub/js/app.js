@@ -44,14 +44,13 @@ function initDataBase(){
   LS.set('currentNoteId', 1);
 }
 
-
 // ================================================
 
 var App = React.createClass({
   getDefaultProps(){
     var firstVisit = LS.get('firstVisit') === null ? true : false;
     if (firstVisit === true) {
-      console.log('first visit / generate post');
+      // console.log('first visit / generate post');
       initDataBase();
     }
   },
@@ -63,7 +62,7 @@ var App = React.createClass({
     }
   },
   currentNoteTitleChanged(title){
-    console.log(title);
+    // console.log(title);
     this.setState({
       currentNoteTitle: title
     })
@@ -124,6 +123,12 @@ var Editor = React.createClass({
 })
 
 var EditorTitle = React.createClass({
+  keyDownHandler(e){
+    if (e.keyCode === 13) {
+      e.preventDefault;
+      document.querySelector('.editor-body').focus()
+    }
+  },
   keyUpHandler(e){
     LS.set('title', e.target.innerHTML, this.props.currentNoteId);
     this.props.currentNoteTitleChanged(e.target.innerHTML)
@@ -135,6 +140,7 @@ var EditorTitle = React.createClass({
         className="editor-title"
         contentEditable
         onKeyUp={this.keyUpHandler}
+        onKeyDown={this.keyDownHandler}
         dangerouslySetInnerHTML={{__html: this.props.title}}
       ></div>
     )
@@ -193,7 +199,7 @@ var List = React.createClass({
     return (
       <div className="list">
         {notes}
-        <button onClick={this.createNote}>New note</button>
+        <button className="list-new" onClick={this.createNote}>New note</button>
       </div>
     )
   }
