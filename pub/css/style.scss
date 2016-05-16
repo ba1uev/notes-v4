@@ -4,6 +4,7 @@
 
 $bg: #fff;
 $alt: #00f;
+$alt_lighter: rgba($alt, 0.03);
 $list-item: #939393;
 $list-item_empty: #939393;
 $list-item_active: #000;
@@ -28,7 +29,7 @@ body {
   margin: 80px auto;
   &-title, &-body {
     // background: #fff;
-    padding: 10px;
+    padding: 8px 16px;
   }
   &-title:focus, &-body:focus {
     outline: none;
@@ -37,7 +38,8 @@ body {
     font-weight: 900;
     font-size: 30px;
     margin-bottom: 20px;
-    // border-left: 3px solid #eee;
+    border-left: 3px solid $alt;
+    // background: $alt_lighter;
   }
   &-body {
     font-size: 18px;
@@ -46,10 +48,13 @@ body {
 }
 
 .list {
-  position: absolute;
-  top: 10px;
+  position: fixed;;
+  top: 0;
+  bottom: 0;
   right: 10px;
   width: 200px;
+  height: 300px;
+  margin: auto;
   // background: #eee;
   padding: 10px;
   text-align: right;
