@@ -22,24 +22,40 @@ var LS = {
   },
   set(key, value, id){
     localStorage[this.map[key] + (id ? id : '')] = value
+  },
+  delete(key, id){
+    if (localStorage[this.map[key] + id].length) {
+      delete localStorage[this.map[key] + id]
+      return true
+    }
+    return false
   }
 }
 
 function createNote(){
-  // debugger;
   var map = LS.get('notesMap') || [];
   var id = map.length ? Math.max.apply(null, map)+1 : 1;
   map.push(id);
-  LS.set('title', 'Новый пост вот', id);
-  LS.set('body', 'Тело такого вот нового поста', id);
+  LS.set('title', '', id);
+  LS.set('body', '', id);
   LS.set('currentNoteId', id);
   LS.set('notesMap', map);
 }
 
+function deleteNote(id){
+  LS.delete('title', id);
+  LS.delete('body', id);
+  let notesMap = LS.get('notesMap');
+  notesMap.splice(notesMap.indexOf(id),1);
+  LS.set('notesMap', notesMap);
+  let newId = id>1 ? id-1 : id+1;
+  LS.set('currentNoteId', newId)
+  return newId
+}
+
 function initDataBase(){
-  // debugger;
   LS.set('notesMap', [1]);
-  LS.set('title', 'ПЕРВЫЙ ПОСТ', 1);
+  LS.set('title', 'What\'s this?', 1);
   LS.set('body', 'bdy of the first POST', 1);
   LS.set('currentNoteId', 1);
 }
@@ -50,19 +66,16 @@ var App = React.createClass({
   getDefaultProps(){
     var firstVisit = LS.get('firstVisit') === null ? true : false;
     if (firstVisit === true) {
-      // console.log('first visit / generate post');
       initDataBase();
     }
   },
   getInitialState() {
     return {
-      // notesTitles: localStorage.notesTitles || null,
       currentNoteId: LS.get('currentNoteId') || 1,
-      // currentNoteTitle: LS.get(' '),
+      notesMap: LS.get('notesMap'),
     }
   },
   currentNoteTitleChanged(title){
-    // console.log(title);
     this.setState({
       currentNoteTitle: title
     })
@@ -71,7 +84,6 @@ var App = React.createClass({
     LS.set('firstVisit', false);
   },
   chooseNoteAction(id){
-    // console.log(typeof note, note);
     LS.set('currentNoteId', id);
     this.setState({
       currentNoteId: +id
@@ -80,7 +92,14 @@ var App = React.createClass({
   createNote(){
     createNote();
     this.setState({
-      currentNoteId: LS.get('currentNoteId')
+      currentNoteId: LS.get('currentNoteId'),
+      notesMap: LS.get('notesMap'),
+    })
+  },
+  deleteNoteHandler(id){
+    this.setState({
+      currentNoteId: id,
+      notesMap: LS.get('notesMap'),
     })
   },
   render() {
@@ -89,11 +108,13 @@ var App = React.createClass({
         <Editor
           currentNoteId={this.state.currentNoteId}
           currentNoteTitleChanged={this.currentNoteTitleChanged}
+          deleteNoteHandler={this.deleteNoteHandler}
         />
         <List
           currentNoteId={this.state.currentNoteId}
           chooseNoteAction={this.chooseNoteAction}
           createNote={this.createNote}
+          notesMap={this.state.notesMap}
         />
       </div>
     )
@@ -104,19 +125,29 @@ var Editor = React.createClass({
   currentNoteTitleChanged(t){
     this.props.currentNoteTitleChanged(t)
   },
+  deleteNote(){
+    if (confirm('Are you sure to remove note?')) {
+      let id = this.props.currentNoteId;
+      this.deleteNoteHandler(deleteNote(id));
+    }
+  },
+  deleteNoteHandler(id){
+    this.props.deleteNoteHandler(id)
+  },
   render() {
     var id = this.props.currentNoteId;
     var title = this.props.firstVisit ? 'Бодрый заголовок' : LS.get('title', id);
     var body = this.props.firstVisit ? 'Тело поста' : LS.get('body', id);
+    // <img src={'http://cultofthepartyparrot.com/parrots/parrot.gif'} width="30px"/>
     return (
       <div className="editor">
-        <img src={'http://cultofthepartyparrot.com/parrots/parrot.gif'} width="30px"/>
         <EditorTitle
           currentNoteId={id}
           title={title}
           currentNoteTitleChanged={this.currentNoteTitleChanged}
         />
         <EditorBody currentNoteId={id} body={body}/>
+        <button onClick={this.deleteNote}>Delete note</button>
       </div>
     )
   }
@@ -134,10 +165,10 @@ var EditorTitle = React.createClass({
     this.props.currentNoteTitleChanged(e.target.innerHTML)
   },
   render() {
-    // var title = this.props.title;
     return (
       <div
         className="editor-title"
+        placeholder="Name your note"
         contentEditable
         onKeyUp={this.keyUpHandler}
         onKeyDown={this.keyDownHandler}
@@ -152,10 +183,10 @@ var EditorBody = React.createClass({
     LS.set('body', e.target.innerHTML, this.props.currentNoteId);
   },
   render() {
-    // var body = localStorage.body || 'Тело поста';
     return (
       <div
         className="editor-body"
+        placeholder="Write your note..."
         contentEditable
         onKeyUp={this.keyUpHandler}
         dangerouslySetInnerHTML={{__html: this.props.body}}
@@ -165,34 +196,32 @@ var EditorBody = React.createClass({
 })
 
 var List = React.createClass({
-  getInitialState(){
-    return {
-      notesMap: LS.get('notesMap')
-    }
-  },
   chooseNote(e){
     this.props.chooseNoteAction(e.target.dataset.id);
   },
   createNote(){
     this.props.createNote()
-    this.setState({
-      notesMap: LS.get('notesMap')
-    })
   },
   render(){
     var currId = this.props.currentNoteId;
-    var notesMap = this.state.notesMap;
+    var notesMap = this.props.notesMap;
     var notes = [];
     if (notesMap) {
       notesMap.forEach((id) => {
         let title = LS.get('title', id);
+        // U+1F601  U+1F567
+        let symbolRange = ['1F300','1F3BF'];
+        let symbolRangeNum = symbolRange.map((i)=>{return parseInt(i,16)});
+        let randomNum = Math.floor(Math.random()*(symbolRangeNum[1]-symbolRangeNum[0]) + Math.min.apply(Math, symbolRangeNum));
+        randomNum = randomNum.toString(16).toUpperCase();
+        // let randomSymbol = `\\u${randomNum};`
         notes.push(
           <div
             className={currId === +id ? "list-item active" : "list-item"}
             data-id={id}
             onClick={this.chooseNote}
             key={id}
-          >{title ? title : <span style={{color: 'gray'}}>Ноу Нейм ПОСТ</span>}</div>
+          >{title ? title : <span className="empty">No name</span>}</div>
         )
       })
     }

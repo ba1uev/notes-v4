@@ -5,6 +5,13 @@
 body {
   margin: 0;
   font-family: 'helvetica';
+  background: #fff;
+}
+
+[contenteditable=true]:empty:before {
+  content: attr(placeholder);
+  display: block;
+  color: #ddd;
 }
 
 .editor {
@@ -25,6 +32,7 @@ body {
 }
 .editor-body {
   font-size: 18px;
+  min-height: 60vh;
 }
 
 .list {
@@ -40,25 +48,33 @@ body {
   margin-bottom: 8px;
   font-size: 12px;
   cursor: pointer;
+  padding-right: 10px;
+  box-sizing: border-box;
+  border-right: 2px solid #fff;
+  color: #939393;
+}
+.list-item span.empty {
+  color: #939393;
 }
 .list-item.active {
-  color: red;
+  border-color: #00f;
+  color: #000;
 }
 .list-new {
   margin-top: 20px;
 }
 
 button {
-  border: 2px solid red;
+  border: 2px solid #00f;
   background: none;
-  color: red;
+  color: #00f;
   font-weight: 600;
 }
 button:focus {
   outline: none;
 }
 button:active {
-  background: red;
+  background: #00f;
   color: #fff;
 }
 
