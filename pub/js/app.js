@@ -209,14 +209,7 @@ var List = React.createClass({
     var notes = [];
     if (notesMap) {
       notesMap.forEach((id) => {
-        // debugger;
         let title = LS.get('title', id);
-        // U+1F601  U+1F567
-        // let symbolRange = ['1F300','1F3BF'];
-        // let symbolRangeNum = symbolRange.map((i)=>{return parseInt(i,16)});
-        // let randomNum = Math.floor(Math.random()*(symbolRangeNum[1]-symbolRangeNum[0]) + Math.min.apply(Math, symbolRangeNum));
-        // randomNum = randomNum.toString(16).toUpperCase();
-        // // let randomSymbol = `\\u${randomNum};`
         notes.push(
           <div
             className={currId === +id ? "list-item active" : "list-item"}

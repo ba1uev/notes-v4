@@ -21,6 +21,7 @@ body {
 }
 .editor-title, .editor-body {
   padding: 8px 16px;
+  margin-bottom: 20px;
 }
 .editor-title:focus, .editor-body:focus {
   outline: none;
@@ -28,8 +29,6 @@ body {
 .editor-title {
   font-weight: 900;
   font-size: 30px;
-  margin-bottom: 20px;
-  border-left: 3px solid #00f;
 }
 .editor-body {
   font-size: 18px;
@@ -61,7 +60,7 @@ body {
   color: #939393;
 }
 .list-item.active {
-  border-color: #00f;
+  border-color: #000;
   color: #000;
 }
 .list-new {
@@ -69,16 +68,16 @@ body {
 }
 
 button {
-  border: 2px solid #00f;
+  border: 2px solid #000;
   background: none;
-  color: #00f;
+  color: #000;
   font-weight: 600;
 }
 button:focus {
   outline: none;
 }
 button:active {
-  background: #00f;
+  background: #000;
   color: #fff;
 }
 

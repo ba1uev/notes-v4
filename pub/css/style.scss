@@ -3,7 +3,7 @@
 }
 
 $bg: #fff;
-$alt: #00f;
+$alt: #000;
 $alt_lighter: rgba($alt, 0.03);
 $list-item: #939393;
 $list-item_empty: #939393;
@@ -30,6 +30,7 @@ body {
   &-title, &-body {
     // background: #fff;
     padding: 8px 16px;
+    margin-bottom: 20px;
   }
   &-title:focus, &-body:focus {
     outline: none;
@@ -37,8 +38,7 @@ body {
   &-title {
     font-weight: 900;
     font-size: 30px;
-    margin-bottom: 20px;
-    border-left: 3px solid $alt;
+    // border-left: 3px solid $alt;
     // background: $alt_lighter;
   }
   &-body {
